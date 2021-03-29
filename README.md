@@ -30,6 +30,8 @@ for the database credentials.
 ## Setup
 You'll need to install the following on your test host
 - git
+- Docker
+- docker-compose
 - psql client
 - java
 - R, including devtools

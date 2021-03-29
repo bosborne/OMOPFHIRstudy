@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS @cdm_schmea.f_person;
+DROP TABLE IF EXISTS :cdm_schmea.f_person;
 
-CREATE TABLE @cdm_schmea.f_person (
+CREATE TABLE :cdm_schmea.f_person (
 	person_id int4 NOT NULL,
 	family_name varchar(255) NULL,
 	given1_name varchar(255) NULL,
@@ -16,4 +16,4 @@ CREATE TABLE @cdm_schmea.f_person (
 	maritalstatus varchar(255) NULL
 );
 
-INSERT INTO @cdm_schema.f_person(person_id) SELECT person_id FROM @cdm_schema.person;
+INSERT INTO :cdm_schema.f_person(person_id) SELECT person_id FROM :cdm_schema.person;

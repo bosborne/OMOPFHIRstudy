@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW @cdm_schema.f_observation_view
+CREATE OR REPLACE VIEW :cdm_schema.f_observation_view
 AS SELECT measurement.measurement_id AS observation_id,
     measurement.person_id,
     measurement.measurement_concept_id AS observation_concept_id,
@@ -21,7 +21,7 @@ AS SELECT measurement.measurement_id AS observation_id,
     measurement.unit_source_value,
     measurement.value_source_value,
     NULL::character varying AS qualifier_source_value
-   FROM @cdm_schema.measurement
+   FROM :cdm_schema.measurement
 UNION ALL
  SELECT - observation.observation_id AS observation_id,
     observation.person_id,
@@ -45,7 +45,7 @@ UNION ALL
     observation.unit_source_value,
     NULL::character varying AS value_source_value,
     observation.qualifier_source_value
-   FROM @cdm_schema.observation
+   FROM :cdm_schema.observation
   WHERE NOT (observation.observation_concept_id IN ( SELECT c.concept_id
            FROM cdm60.concept c
           WHERE (upper(c.concept_name::text) ~~ '%ALLERG%'::text OR upper(c.concept_name::text) ~~ '%REACTION%'::text) AND (c.domain_id::text = 'Observation'::text OR c.domain_id::text = 'Condition'::text) AND c.invalid_reason::text <> 'D'::text));

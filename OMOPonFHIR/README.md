@@ -3,7 +3,7 @@ Steps for installing the [GT-FHIR2](http://omoponfhir.org/) OMOPonFHIR server
 in the test environment.
 
 ## Overview
-This document describes the installation of the [GT-FHIR2](http://omoponfhir.org/)  
+This document describes the installation of the [GT-FHIR2](http://omoponfhir.org/)
 “OMOPonFHIR” server in the test environment. Because this environment include
 two different verions of the OMOP CDM we will install two different versions
 of the server.
@@ -14,16 +14,29 @@ provides the FHIR API.
 
 Both versions of the OMOPonFHIR server will be run via Docker.
 
+## Prepare database
+Here we address two issues in deploying OMOPonFHIR. The first is two missing
+steps in the OMOPonFHIR documentation, namely the creation of a required
+table and a required view. The second results from the OHDSI ETL-Syntha process,
+where the missing value for certain identifies is represented in some tables
+as 0 instead of NULL; this causes errors in the OMOPonFHIR server. The steps
+are:
+- Add a new table, `f_person`, to the OMOP CDM schema(s)
+and populate `person_id` from the OMOP CDM `person` table (see `f_person.sql`)
+- Add a new view, `f_observation_view`, to the OMOP CDM schema(s) (see `f_observation_view.sql`)
+- Update tables in the OMOP CDM schema(s) where the ETL process inserted
+0 as a missing value for one or both of `provider_id` and `visit_detail_id`
+(see `clean_zeros.sql`)
+
 ## Installation 
 ### OMOP CDM v6 to FHIR R4
 As of this writing, this is the default version of the OMOPonFHIR server.
 The source for the server is [here](https://github.com/omoponfhir/omoponfhir-main)
 and basic instructions for configuration and running are covered there; however,
-those instructions miss two important steps that must be performed in the
-RDBMS hosting the OMOP CDM. The basic overview is:
-- Add a new table, `f_person`, to the OMOP CDM v6 schema 
-and populate `person_id` from the OMOP CDM v6 `person` table (see `f_person.sql`)
-- Add a new view, `f_observation_view`, to the OMOP CDM v6 schema (see `f_observation_view.sql`)
+as noted above those instructions miss two important steps that must be performed in the
+RDBMS hosting the OMOP CDM. Presuming the steps to prepare the database
+have been completed, the basic overview of the instalation of the default 
+version of the server is:
 - Change directory to `omoponfhir/v6` 
 - Clone (recursively) the `omoponfhir-main` repository and cd to `omoponfhir-main/`
 - Add appropriate environment variables to the OMOPonFHIR `Dockerfile`
@@ -39,9 +52,6 @@ the OMOP CDM v6 schema via `currentSchema`
 The OMOPonFHIR repository does not make use releases in a way that facilitates
 download of the set of submodules required to install this version of the 
 server; some additional effort is required. Here the steps are:
-- Add a new table, `f_person`, to the OMOP CDM v5 schema 
-and populate `person_id` from the OMOP CDM v5 `person` table (see `f_person.sql`)
-- Add a new view, `f_observation_view`, to the OMOP CDM v5 schema (see `f_observation_view.sql`)
 - Change directory to `omoponfhir/v5` 
 - Clone (non-recursively) the `omoponfhir-main` repository and cd to `omoponfhir-main`
 - Remove directories for v6 mapping and JPA base:
