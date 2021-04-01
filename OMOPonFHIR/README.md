@@ -8,7 +8,7 @@ This document describes the installation of the [GT-FHIR2](http://omoponfhir.org
 two different verions of the OMOP CDM we will install two different versions
 of the server.
 
-OMOPonFHIR operates as a Tomcap app between a FHIR server and the PostgreSQL
+OMOPonFHIR operates as a Tomcat app between a FHIR server and the PostgreSQL
 RDBMS hosting the OMOP CDM schemas. The [HAPI FHIR server](https://hapifhir.io)
 provides the FHIR API.
 
