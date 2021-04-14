@@ -64,6 +64,9 @@ server; some additional effort is required. Here the steps are:
 - Edit `omoponfhir-r4-server/pom.xml` to replace the artifactId referencing the
 v6 mapping module with the v5 module and adjust the version numbers for the
 v5-mapping and v5-jpabase modules to match those in their pom.xml files
+- Edit `ResfulServlet.java`, `FhirServerConfig.java`, and `SMARTonFHIRConformanceStatement.java`
+in the `omoponfhir-r4-server` submodule, replacing references to `omopv6`
+with `omopv5`
 - Add appropriate environment variables to the OMOPonFHIR `Dockerfile`
   - set the `JDBC_URL` variable to reference the RDS endpoint and specify
 the OMOP CDM v6 schema via `currentSchema`

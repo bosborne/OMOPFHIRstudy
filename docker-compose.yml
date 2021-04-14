@@ -1,0 +1,23 @@
+version: '3'
+services:
+  OMOPonFHIR_5:
+    build:
+      context: './OMOPonFHIR/v5/omoponfhir-main'
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: always
+    ports:
+      - "8081:8080"
+
+  OMOPonFHIR_6:
+    build:
+      context: './OMOPonFHIR/v6/omoponfhir-main'
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: always
+    ports:
+      - "8080:8080"
