@@ -103,6 +103,65 @@ to populate the second. For this you would use the `LoadVocabFromSchema.r`
 script instead of `LoadVocabFromCsv.r`, specifying "vocabSchema". This is much faster.
 
 
-## GT-FHIR2 Server
-Instructions for setting up multiple versions of the GT-FHIR2 system can
-be found in the `omoponfhir` directory.
+## GT-FHIR2 server
+Instructions for setting up multiple versions of the GT-FHIR2 system
+as used in this study can be found in the `OMOPonFHIR` directory.
+
+## Accessing data via the GT-FHIR2 server
+The default configuration for either the v6 to R4 or v5 to R4 server creates
+the FHIR API at `http://<server>:8080/omoponfhir4/fhir`; the configuration
+used here specifies port 8080 for the CDM v6 schema and port 8081 for the
+CDM v5.3 schema. The server can be accessed easily from the command line for
+testing purposes, *viz.*,
+
+```
+curl -H "Authorization: Basic <auth>"  'http://<server>:8080/omoponfhir4/fhir/Patient/123/'
+```
+
+Where `<auth>` is the (base64-encoded) `AUTH_BASIC` string defined in the
+relevant Dockerfile.
+
+### Client examples
+FHIR client libraries have been developed for both Python and R.
+The [fhircrackr](https://cran.r-project.org/web/packages/fhircrackr/index.html)
+library for R supports basic authentication as is the default for the OMOPonFHIR server. Here is a simple example to identify all Condition resources that contain a code corresponding to infection by the SARS-CoV-2 virus:
+
+```
+library(fhircrackr)
+fhir <- 'http://<server>:8080/omoponfhir4/fhir'
+req <- paste0(fhir,"/Condition?code=840539006")
+bundle <- fhir_search(req, username=user, password=pwd, verbose=0)
+
+condition_design <- list(
+
+    Conditions = list(
+        
+        resource = "//Condition",
+        
+        cols = list(
+            CID       = "id",
+            onset     = "onsetDateTime",
+            abate     = "abatementDateTime",
+            patient   = "subject/reference",
+            encounter = "encounter/reference"
+        ),
+        
+        style = list(
+            sep = "|",
+            brackets = c("[","]"),
+            rm_empty_cols = FALSE
+        )
+    )
+)
+cracked <- fhir_crack(bundles=bundle, design=condition_design)
+
+# Extract patients from bundle by “melting” the cracked bundle
+cols <- ("patient")
+melt <- fhir_melt(cracked$Conditions, cols=cols, 
+                     brackets = c("[","]"),sep=" | ", all_columns = FALSE)
+
+patients <- fhir_rm_indices(melt, brackets = c("[","]")
+
+# patient[,1] contains the Patient resource identifiers associated 
+# with the Conditions
+```
